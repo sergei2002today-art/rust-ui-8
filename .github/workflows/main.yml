@@ -1,0 +1,21 @@
+name: build
+on: [push, workflow_dispatch]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: for f in *.zip; do unzip -qo "$f"; done
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 9.2.0
+      - run: gradle build
+        working-directory: rustui
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rustui-jar
+          path: rustui/build/libs/*.jar
